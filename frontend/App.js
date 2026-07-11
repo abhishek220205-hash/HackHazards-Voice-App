@@ -5,7 +5,7 @@ import {
 } from 'react-native';
 import { Audio } from 'expo-av';
 
-const BACKEND_URL = 'http://192.168.31.245:3000';
+const BACKEND_URL = 'https://hackhazards-voice-app.onrender.com';
 
 export default function App() {
   const [screen, setScreen] = useState('home');
