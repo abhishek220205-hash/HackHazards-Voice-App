@@ -99,9 +99,8 @@ export default function App() {
       });
 
       const response = await fetch(`${BACKEND_URL}/process-voice`, {
-        method: 'POST',
-        body: formData,
-        headers: { 'Content-Type': 'multipart/form-data' },
+       method: 'POST',
+       body: formData,
       });
 
       const data = await response.json();
