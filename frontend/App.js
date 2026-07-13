@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import {
   View, Text, TouchableOpacity, StyleSheet,
-  ActivityIndicator, Alert, Animated, ScrollView
+  ActivityIndicator, Alert, Animated, ScrollView, Platform
 } from 'react-native';
 import { Audio } from 'expo-av';
 
@@ -92,11 +92,23 @@ export default function App() {
   const sendToBackend = async (audioUri) => {
     try {
       const formData = new FormData();
-      formData.append('audio', {
-        uri: audioUri,
-        type: 'audio/wav',
-        name: 'recording.wav',
-      });
+
+      // Web uses a browser Blob; native Expo uses its URI file object.
+      if (Platform.OS === 'web') {
+        const audioResponse = await fetch(audioUri);
+        if (!audioResponse.ok) {
+          throw new Error('Could not read the recorded audio.');
+        }
+        const audioBlob = await audioResponse.blob();
+        const extension = audioBlob.type.includes('webm') ? 'webm' : 'wav';
+        formData.append('audio', audioBlob, `recording.${extension}`);
+      } else {
+        formData.append('audio', {
+          uri: audioUri,
+          type: 'audio/wav',
+          name: 'recording.wav',
+        });
+      }
 
       const response = await fetch(`${BACKEND_URL}/process-voice`, {
        method: 'POST',
